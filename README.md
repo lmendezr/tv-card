@@ -14,6 +14,8 @@
 - Fully functional touchpad for navigation (thanks to [iablon's Touchpad Card](https://github.com/iablon/HomeAssistant-Touchpad-Card)) ❤️
 - Slider for volume (thanks to [AnthonMS's Slider Card](https://github.com/AnthonMS/my-cards#slider-card)) ❤️
 - Supports [ollo69's SamsungTV Smart Component](https://github.com/ollo69/ha-samsungtv-smart)
+- Supports [LG webOS Smart TV](https://www.home-assistant.io/integrations/webostv/)
+- Supports [Android TV](https://www.home-assistant.io/integrations/androidtv/)
 - Much easier setup
 - Implements haptics feedback
 - Customizable layout, you can choose the order of the rows and buttons
@@ -25,18 +27,21 @@
 
 ## Options
 
-| Name | Type | Requirement | Description
-| ---- | ---- | ------- | -----------
-| type | string | **Required** | `custom:tv-card`
-| entity | string | **Required** | The `media_player` entity to control
-| title | string | **Optional** | Card title for showing as header
-| enable_double_click | boolean | **Optional** | Whether a double click on the touchpad should send the key in `double_click_keycode`. Defaults to `true`.
-| double_click_keycode | string | **Optional** | The key for double clicks on the touchpad. Defaults to `KEY_RETURN`
-| enable_button_feedback | boolean | **Optional** | Shall clicks on the buttons return a vibration feedback? Defaults to `true`.
-| enable_slider_feedback | boolean | **Optional** | Shall the volume slider return a vibration feedback when you slide through it? Defaults to `true`.
-| slider_config | object | **Optional** | Custom configuration for the volume slider. See [slider-card](https://github.com/AnthonMS/my-cards)
-| custom_keys | object | **Optional** | Custom keys for the remote control. Each item is an object that should have `icon` and at least one of the following properties: `key`, `source`, `service`.
-| custom_sources | object | **Optional** | Custom sources for the remote control. Same object as above, but letting you split keys and sources.
+| Name | Type | Requirement | Default |Description
+| ---- | ---- | ------- | ---- | -----------
+| type | string | **Required** | | `custom:tv-card`
+| entity | string | **Required** | | The `media_player` entity to control.
+| platform | string | **Optional** | `samsungtv` | Platform of `media_player`. Supported values: `samsungtv`, `androidtv`, `webostv`, `roku`
+| remote_entity | string | **Optional** | `remote.{{entity_id}}` | The remote entity that controls the Roku `media_player`
+| volume_entity | string | **Optional** | `entity` | The `media_player` entity for volume control (working only with volume_row: `slider`)
+| title | string | **Optional** | | Card title for showing as header.
+| enable_double_click | boolean | **Optional** | `true` | Whether a double click on the touchpad should send the key in `double_click_keycode`
+| double_click_keycode | string | **Optional** | `KEY_RETURN` | The key for double clicks on the touchpad. Defaults to `KEY_RETURN`
+| enable_button_feedback | boolean | **Optional** | `true` | Shall clicks on the buttons return a vibration feedback?
+| enable_slider_feedback | boolean | **Optional** | `true` | Shall the volume slider return a vibration feedback when you slide through it?
+| slider_config | object | **Optional** | | Custom configuration for the volume slider. See [slider-card](https://github.com/AnthonMS/my-cards)
+| custom_keys | object | **Optional** | | Custom keys for the remote control. Each item is an object that should have `icon` and at least one of the following properties: `key`, `source`, `service`.
+| custom_sources | object | **Optional** | | Custom sources for the remote control. Same object as above, but letting you split keys and sources.
 
 Using only these options you will get an empty card (or almost empty, if you set a title).
 In order to include the buttons, you need to specify in the config the rows you want and which buttons you want in it.
@@ -62,8 +67,10 @@ There also `volume_row` and `navigation_row`, but these requires a string as val
 
 ## **Notice**
 
-This card uses `media_player.play_media` to send keys to the TV.
-This is the way [ollo69's SamsungTV Smart Component](https://github.com/ollo69/ha-samsungtv-smart) (which i based this card on) works, but don't worry: if your TV is from another brand or simply the TV integration does not use `media_player.play_media` for sending keys, you can still use this card by setting [custom buttons](#custom-buttons) with services to send keys to your TV (or do whatever you want) in your way (just like the original [tv-card](https://github.com/marrobHD/tv-card)).
+This card supports `androidtv`, `webostv` and `samsungtv` out of the box. If your TV is from another brand you can use this card by setting [custom buttons](#custom-buttons) with services to send keys to your TV (or do whatever you want) in your way.
+If you have time and wanna help, you can add new integrations to this card. Check [this PR](https://github.com/usernein/tv-card/pull/8).
+
+Platform `webostv` doesn't support power key (see [webOS Integration](https://www.home-assistant.io/integrations/webostv/#turn-on-action))
 
 ## Custom buttons
 
@@ -223,6 +230,7 @@ Playing with order, moving and repeating buttons:
 ```yaml
 type: custom:tv-card
 entity: media_player.tv
+platform: samsungtv
 title: Example 1
 power_row:
   - power
@@ -260,6 +268,7 @@ Buttons, buttons everywhere!
 ```yaml
 type: custom:tv-card
 entity: media_player.tv
+platform: samsungtv
 title: Example 2
 power_row:
   - power
@@ -295,6 +304,7 @@ Using less
 ```yaml
 type: custom:tv-card
 entity: media_player.tv
+platform: samsungtv
 title: Example 3
 power_row:
   - power
